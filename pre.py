@@ -11,6 +11,8 @@ from airflow.utils.dates import days_ago
 #from airflow.utils.email import send_email
 from airflow.models import Variable
 
+#from airflow.providers.google.cloud.transfers.gcs_to_local import GCSToLocalFilesystemOperator
+from airflow.providers.google.cloud.hooks.gcs import GCSHook
 
 default_args = {
     'owner': 'airflow',
@@ -29,6 +31,22 @@ numberOfRecommendationsPerArt = int(Variable.get("numberOfRecommendationsPerArt"
 
 @dag(default_args=default_args, schedule_interval="* * * * *", start_date=days_ago(2), tags=['example'])
 def pre():
+
+    @task()
+    def loadData():
+        gcs_hook = GCSHook(
+            gcp_conn_id=gcp_conn_id
+        )
+        file = gcs_hook.download(bucket_name='pre_bucket', object_name='dfDataSalDocsTest.json')
+        print(file)
+        
+#        download_file = GCSToLocalFilesystemOperator(
+#            task_id="download_file",
+#            object_name='pre_bucket/pre/1041/input/dfDataSalDocsTest.json',
+#            bucket=BUCKET,
+#            filename=PATH_TO_LOCAL_FILE,
+#        )
+
 
     @task()
     def extractData():
@@ -87,7 +105,31 @@ def pre():
         print(dfResult.head())
         return dfResult.to_csv()
 
+    @task()
+        def result():
+            pass
+#            aResult = pd.read_csv(io.StringIO(data))
+#            dfParamsAndResult = pd.DataFrame(columns=[
+#                    'Result_MinSupport'
+#                    ,'Result_artTypeConnectedNo'
+#                    ,'Result_mergedConnectedArt'
+#                    ,'Result_NumberOfArticlesWithR'
+#                    ,'Result_NumberOfRecommendations'
+#                    ,'Result_Runtime'
+#                    ,'Result_DateOfRun'
+#            ])
+#
+#            dfParamsAndResult.loc[0] = [
+#                    minSupport
+#                    ,cnf["settings"]["pre"]["artTypeConnectedNo"]
+#                    ,dfDataConnectedArt.shape[0]
+#                    ,allArtDistinct.shape[0]
+#                    ,dfResult.shape[0]
+#                    ,datetime.now() - startTime
+#                    ,startTime
+#            ]
 
+    loadData()
     data = extractData()
     transformedData = transform1(data)
     transform2(transformedData)
