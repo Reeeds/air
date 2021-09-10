@@ -35,7 +35,7 @@ def pre():
     @task()
     def loadData():
         gcs_hook = GCSHook(
-            gcp_conn_id=gcp_conn_id
+            gcp_conn_id=google_cloud_default
         )
         file = gcs_hook.download(bucket_name='pre_bucket', object_name='dfDataSalDocsTest.json')
         print(file)
