@@ -40,7 +40,7 @@ def pre():
         )
         file = gcs_hook.download(bucket_name='pre_bucket', object_name='dfDataSalDocsTest.csv')
         print(type(file))
-        df = pd.read_csv(io.StringIO(file))
+        df = pd.read_csv(io.BytesIO(file))
         print(df.head())
         return df
 #        download_file = GCSToLocalFilesystemOperator(
