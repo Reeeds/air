@@ -38,9 +38,10 @@ def pre():
         gcs_hook = GCSHook(
             gcp_conn_id=google_cloud_connection_id
         )
-        file = gcs_hook.download(bucket_name='pre_bucket', object_name='dfDataSalDocsTest.json')
+        file = gcs_hook.download(bucket_name='pre_bucket', object_name='dfDataSalDocsTest.csv')
         print(type(file))
-        df = pd.read_csv(io.BytesIO(file))
+        df = pd.read_csv(io.StringIO(file))
+        print(df.head())
         return df
 #        download_file = GCSToLocalFilesystemOperator(
 #            task_id="download_file",
