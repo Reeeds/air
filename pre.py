@@ -29,7 +29,7 @@ minSupport = float(Variable.get("minSupport"))
 numberOfRecommendationsPerArt = int(Variable.get("numberOfRecommendationsPerArt"))
 
 
-@dag(default_args=default_args, schedule_interval="* * * * *", start_date=days_ago(2), tags=['example'])
+@dag(default_args=default_args, schedule_interval=None, start_date=days_ago(2), tags=['example'])
 def pre():
 
     @task()
