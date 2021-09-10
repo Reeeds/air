@@ -27,7 +27,7 @@ default_args = {
 
 minSupport = float(Variable.get("minSupport"))
 numberOfRecommendationsPerArt = int(Variable.get("numberOfRecommendationsPerArt"))
-
+google_cloud_connection_id = 'google_cloud_default'
 
 @dag(default_args=default_args, schedule_interval=None, start_date=days_ago(2), tags=['example'])
 def pre():
@@ -35,11 +35,12 @@ def pre():
     @task()
     def loadData():
         gcs_hook = GCSHook(
-            gcp_conn_id='google_cloud_default'
+            gcp_conn_id=google_cloud_connection_id
         )
         file = gcs_hook.download(bucket_name='pre_bucket', object_name='dfDataSalDocsTest.json')
-        print(file)
-        
+        print(type(file))
+        df = pd.read_json(file)
+        return df
 #        download_file = GCSToLocalFilesystemOperator(
 #            task_id="download_file",
 #            object_name='pre_bucket/pre/1041/input/dfDataSalDocsTest.json',
@@ -49,13 +50,13 @@ def pre():
 
 
     @task()
-    def extractData():
+    def extractData(data):
 
-        dfDataSalDocsTest = Variable.get("dfDataSalDocsTestJSON", deserialize_json=True)
+#        dfDataSalDocsTest = Variable.get("dfDataSalDocsTestJSON", deserialize_json=True)
 
-        dfDataSalDocs = pd.DataFrame(dfDataSalDocsTest)
+#        dfDataSalDocs = pd.DataFrame(dfDataSalDocsTest)
 
-        dfDataSalDocs = dfDataSalDocs.groupby('SalDoc_InternalNo')['SalDocItem_ArtInternalNo']
+        dfDataSalDocs = data.groupby('SalDoc_InternalNo')['SalDocItem_ArtInternalNo']
         dataSalDocsList = []
         for name, items in dfDataSalDocs:
             basketItems = items.tolist()
@@ -105,9 +106,9 @@ def pre():
         print(dfResult.head())
         return dfResult.to_csv()
 
-    @task()
-    def result():
-        pass
+#    @task()
+#    def result():
+#        pass
 #            aResult = pd.read_csv(io.StringIO(data))
 #            dfParamsAndResult = pd.DataFrame(columns=[
 #                    'Result_MinSupport'
@@ -129,8 +130,8 @@ def pre():
 #                    ,startTime
 #            ]
 
-    loadData()
-    data = extractData()
+    data = loadData()
+    data = extractData(data)
     transformedData = transform1(data)
     transform2(transformedData)
 
