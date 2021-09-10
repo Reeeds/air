@@ -106,8 +106,8 @@ def pre():
         return dfResult.to_csv()
 
     @task()
-        def result():
-            pass
+    def result():
+        pass
 #            aResult = pd.read_csv(io.StringIO(data))
 #            dfParamsAndResult = pd.DataFrame(columns=[
 #                    'Result_MinSupport'
