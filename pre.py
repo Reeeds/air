@@ -107,6 +107,17 @@ def pre():
         print(dfResult.head())
         return dfResult.to_csv()
 
+    @task()
+    def uploadData():
+        fileToUpload = pd.read_csv(io.StringIO(data))
+        print('step1')
+        gcs_hook = GCSHook(
+            gcp_conn_id=google_cloud_connection_id
+        )
+        print('step2')
+        gcs_hook.upload(bucket_name='pre_bucket', object=fileToUpload, filename='test.csv', mime_type='application/csv')
+        print('end')
+
 #    @task()
 #    def result():
 #        pass
@@ -134,7 +145,7 @@ def pre():
     data = loadData()
     data = extractData(data)
     transformedData = transform1(data)
-    transform2(transformedData)
-
+    transformedData2 = transform2(transformedData)
+    uploadData(transformedData2)
 pre = pre()
 
