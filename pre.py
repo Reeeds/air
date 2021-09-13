@@ -116,7 +116,7 @@ def pre():
             gcp_conn_id=google_cloud_connection_id
         )
         print('step2')
-        gcs_hook.upload(bucket_name='pre_bucket', data=data, filename='test.csv', object_name='test.csv' mime_type='application/csv')
+        gcs_hook.upload(bucket_name='pre_bucket', data=data, filename='test.csv', object_name='test.csv', mime_type='application/csv')
         print('end')
 
 #    @task()
