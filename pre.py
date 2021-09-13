@@ -39,16 +39,8 @@ def pre():
             gcp_conn_id=google_cloud_connection_id
         )
         file = gcs_hook.download(bucket_name='pre_bucket', object_name='dfDataSalDocsTest.json')
-#        df = pd.read_csv(io.BytesIO(file))
         df = pd.read_json(io.BytesIO(file))
-        return df.to_csv()
-#        download_file = GCSToLocalFilesystemOperator(
-#            task_id="download_file",
-#            object_name='pre_bucket/pre/1041/input/dfDataSalDocsTest.json',
-#            bucket=BUCKET,
-#            filename=PATH_TO_LOCAL_FILE,
-#        )
-
+        return df.to_csv(encoding='utf8', sep=';')
 
     @task()
     def extractData(data):
@@ -87,7 +79,7 @@ def pre():
         aResult["antecedents"] = rules["antecedents"].apply(lambda x: ', '.join(list(x))).astype("unicode")
         aResult["consequents"] = rules["consequents"].apply(lambda x: ', '.join(list(x))).astype("unicode")
         df = aResult
-        return df.to_csv()
+        return df.to_csv(encoding='utf8', sep=';')
 
     @task()
     def transform2(data):
@@ -105,43 +97,14 @@ def pre():
         # Neue Spalte mit BoId von ConnectedArt zusammenbauen
         dfResult['ConnectedArt_BoId'] = str(dfResult['consequents']) + "," +   str("70")      + "," + str(dfResult['antecedents'])
         print(dfResult.head())
-        return dfResult.to_csv()
+        return dfResult.to_csv(encoding='utf8', sep=';')
 
     @task()
     def uploadData(data):
-#        fileToUpload = pd.read_csv(io.StringIO(data))
-#        fileToUpload.to_csv('test.csv')
-        print('step1')
         gcs_hook = GCSHook(
             gcp_conn_id=google_cloud_connection_id
         )
-        print('step2')
-        gcs_hook.upload(bucket_name='pre_bucket', data=data, object_name='test.csv', mime_type='application/csv')
-        print('end')
-
-#    @task()
-#    def result():
-#        pass
-#            aResult = pd.read_csv(io.StringIO(data))
-#            dfParamsAndResult = pd.DataFrame(columns=[
-#                    'Result_MinSupport'
-#                    ,'Result_artTypeConnectedNo'
-#                    ,'Result_mergedConnectedArt'
-#                    ,'Result_NumberOfArticlesWithR'
-#                    ,'Result_NumberOfRecommendations'
-#                    ,'Result_Runtime'
-#                    ,'Result_DateOfRun'
-#            ])
-#
-#            dfParamsAndResult.loc[0] = [
-#                    minSupport
-#                    ,cnf["settings"]["pre"]["artTypeConnectedNo"]
-#                    ,dfDataConnectedArt.shape[0]
-#                    ,allArtDistinct.shape[0]
-#                    ,dfResult.shape[0]
-#                    ,datetime.now() - startTime
-#                    ,startTime
-#            ]
+        gcs_hook.upload(bucket_name='pre_bucket', data=data, object_name='output.csv', mime_type='application/csv')
 
     data = loadData()
     data = extractData(data)
