@@ -92,15 +92,16 @@ def pre():
         dfResult = dfResult[['antecedents', 'consequents','rang','antecedent support','consequent support','support','confidence','lift','leverage','conviction']]
         # Neue Spalte mit BoId von ConnectedArt zusammenbauen
         dfResult['ConnectedArt_BoId'] = str(dfResult['consequents']) + "," +   str("70")      + "," + str(dfResult['antecedents'])
-        print(dfResult.head())
+        print(dfResult.head(50))
         return dfResult.to_csv(encoding='utf8', sep=';')
 
     @task()
     def uploadData(data):
+        output = pd.read_csv(filepath_or_buffer=io.StringIO(data),encoding='utf8', sep=';')
         gcs_hook = GCSHook(
             gcp_conn_id=google_cloud_connection_id
         )
-        gcs_hook.upload(bucket_name='pre_bucket', data=data, object_name='output.csv', mime_type='application/csv')
+        gcs_hook.upload(bucket_name='pre_bucket', data=output.to_csv(encoding='utf8', sep=';'), object_name='output.csv', mime_type='application/csv')
 
     data = loadData()
     data = extractData(data)
