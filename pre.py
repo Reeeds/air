@@ -91,7 +91,7 @@ def pre():
         # Reihenfolge der Spalten ändern
         dfResult = dfResult[['antecedents', 'consequents','rang','antecedent support','consequent support','support','confidence','lift','leverage','conviction']]
         # Neue Spalte mit BoId von ConnectedArt zusammenbauen
-        dfResult['ConnectedArt_BoId'] = str(dfResult['consequents']) + "," +   str("70")      + "," + str(dfResult['antecedents'])
+        # todo: gibt einen fehler: dfResult['ConnectedArt_BoId'] = str(dfResult['consequents']) + "," +   str("70")      + "," + str(dfResult['antecedents'])
         print(dfResult.head(50))
         return dfResult.to_csv(encoding='utf8', sep=';')
 
