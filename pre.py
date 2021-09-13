@@ -108,7 +108,7 @@ def pre():
         return dfResult.to_csv()
 
     @task()
-    def uploadData():
+    def uploadData(data):
         fileToUpload = pd.read_csv(io.StringIO(data))
         print('step1')
         gcs_hook = GCSHook(
