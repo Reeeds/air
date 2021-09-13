@@ -36,7 +36,7 @@ def pre():
             gcp_conn_id=google_cloud_connection_id
         )
         file = gcs_hook.download(bucket_name='pre_bucket', object_name='dfDataSalDocsTest.csv')
-        df = pd.read_json(io.BytesIO(file))
+        df = pd.read_csv(io.BytesIO(file))
         return df.to_csv(encoding='utf8', sep=';')
 
     @task()
