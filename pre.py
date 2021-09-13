@@ -36,12 +36,12 @@ def pre():
             gcp_conn_id=google_cloud_connection_id
         )
         file = gcs_hook.download(bucket_name='pre_bucket', object_name='dfDataSalDocsTest.csv')
-        df = pd.read_csv(io.BytesIO(file))
+        df = pd.read_csv(filepath_or_buffer=io.BytesIO(file),encoding='utf8', sep=';')
         return df.to_csv(encoding='utf8', sep=';')
 
     @task()
     def extractData(data):
-        data = pd.read_csv(io.StringIO(data))
+        data = pd.read_csv(io.StringIO(filepath_or_buffer=data,encoding='utf8', sep=';'))
 #        dfDataSalDocsTest = Variable.get("dfDataSalDocsTestJSON", deserialize_json=True)
 #        dfDataSalDocs = pd.DataFrame(dfDataSalDocsTest)
         dfDataSalDocs = data.groupby('SalDoc_InternalNo')['SalDocItem_ArtInternalNo']
