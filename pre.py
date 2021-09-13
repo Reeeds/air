@@ -1,4 +1,3 @@
-
 from datetime import datetime, timedelta
 import pandas as pd
 #import os 
@@ -11,7 +10,6 @@ from airflow.decorators import dag, task
 from airflow.utils.dates import days_ago
 #from airflow.utils.email import send_email
 from airflow.models import Variable
-
 #from airflow.providers.google.cloud.transfers.gcs_to_local import GCSToLocalFilesystemOperator
 from airflow.providers.google.cloud.hooks.gcs import GCSHook
 
@@ -25,7 +23,6 @@ default_args = {
     "retry_delay": timedelta(minutes=5)
 }
 
-
 minSupport = float(Variable.get("minSupport"))
 numberOfRecommendationsPerArt = int(Variable.get("numberOfRecommendationsPerArt"))
 google_cloud_connection_id = 'google_cloud_default'
@@ -38,7 +35,7 @@ def pre():
         gcs_hook = GCSHook(
             gcp_conn_id=google_cloud_connection_id
         )
-        file = gcs_hook.download(bucket_name='pre_bucket', object_name='dfDataSalDocsTest.json')
+        file = gcs_hook.download(bucket_name='pre_bucket', object_name='dfDataSalDocsTest.csv')
         df = pd.read_json(io.BytesIO(file))
         return df.to_csv(encoding='utf8', sep=';')
 
@@ -46,9 +43,7 @@ def pre():
     def extractData(data):
         data = pd.read_csv(io.StringIO(data))
 #        dfDataSalDocsTest = Variable.get("dfDataSalDocsTestJSON", deserialize_json=True)
-
 #        dfDataSalDocs = pd.DataFrame(dfDataSalDocsTest)
-
         dfDataSalDocs = data.groupby('SalDoc_InternalNo')['SalDocItem_ArtInternalNo']
         dataSalDocsList = []
         for name, items in dfDataSalDocs:
