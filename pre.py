@@ -44,6 +44,7 @@ def pre():
         data = pd.read_csv(filepath_or_buffer=io.StringIO(data),encoding='utf8', sep=';')
 #        dfDataSalDocsTest = Variable.get("dfDataSalDocsTestJSON", deserialize_json=True)
 #        dfDataSalDocs = pd.DataFrame(dfDataSalDocsTest)
+        print(data.head())
         dfDataSalDocs = data.groupby('SalDoc_InternalNo')['SalDocItem_ArtInternalNo']
         dataSalDocsList = []
         for name, items in dfDataSalDocs:
