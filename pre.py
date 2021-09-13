@@ -101,7 +101,7 @@ def pre():
         gcs_hook = GCSHook(
             gcp_conn_id=google_cloud_connection_id
         )
-        gcs_hook.upload(bucket_name='pre_bucket', data=io.StringIO(data), object_name='output.csv', mime_type='application/csv')
+        gcs_hook.upload(bucket_name='pre_bucket', data=data, object_name='output.csv', mime_type='application/csv')
 
     data = loadData()
     data = extractData(data)
