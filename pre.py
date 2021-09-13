@@ -30,7 +30,7 @@ minSupport = float(Variable.get("minSupport"))
 numberOfRecommendationsPerArt = int(Variable.get("numberOfRecommendationsPerArt"))
 google_cloud_connection_id = 'google_cloud_default'
 
-@dag(default_args=default_args, schedule_interval=None, start_date=days_ago(2), tags=['example'])
+@dag(default_args=default_args, schedule_interval=None, start_date=days_ago(2), tags=['pre'])
 def pre():
 
     @task()
