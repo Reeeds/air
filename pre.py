@@ -41,7 +41,7 @@ def pre():
 
     @task()
     def extractData(data):
-        data = pd.read_csv(io.StringIO(filepath_or_buffer=data,encoding='utf8', sep=';'))
+        data = pd.read_csv(filepath_or_buffer=io.StringIO(data),encoding='utf8', sep=';')
 #        dfDataSalDocsTest = Variable.get("dfDataSalDocsTestJSON", deserialize_json=True)
 #        dfDataSalDocs = pd.DataFrame(dfDataSalDocsTest)
         dfDataSalDocs = data.groupby('SalDoc_InternalNo')['SalDocItem_ArtInternalNo']
@@ -78,7 +78,7 @@ def pre():
 
     @task()
     def transform2(data):
-        aResult = pd.read_csv(io.StringIO(data))
+        aResult = pd.read_csv(filepath_or_buffer=io.StringIO(data),encoding='utf8', sep=';')
         allArtDistinct = aResult.antecedents.unique()
         dfResult = pd.DataFrame()
         for artNo in  allArtDistinct:
