@@ -97,11 +97,11 @@ def pre():
 
     @task()
     def uploadData(data):
-        output = pd.read_csv(filepath_or_buffer=io.StringIO(data),encoding='utf8', sep=';')
+#        output = pd.read_csv(filepath_or_buffer=io.StringIO(data),encoding='utf8', sep=';')
         gcs_hook = GCSHook(
             gcp_conn_id=google_cloud_connection_id
         )
-        gcs_hook.upload(bucket_name='pre_bucket', data=output.to_csv(encoding='utf8', sep=';'), object_name='output.csv', mime_type='application/csv')
+        gcs_hook.upload(bucket_name='pre_bucket', data=io.StringIO(data), object_name='output.csv', mime_type='application/csv')
 
     data = loadData()
     data = extractData(data)
