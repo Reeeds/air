@@ -22,7 +22,7 @@ default_args = {
     "retry_delay": timedelta(minutes=5)
 }
 
-
+#test
 minSupport = float(Variable.get("minSupport"))
 numberOfRecommendationsPerArt = int(Variable.get("numberOfRecommendationsPerArt"))
 
