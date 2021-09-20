@@ -17,8 +17,6 @@ from airflow.utils.db import provide_session
 from airflow.models import XCom
 from sqlalchemy import func
 
-
-
 default_args = {
     'owner': 'airflow',
     "email_on_failure": False,
@@ -40,7 +38,7 @@ def cleanup_xcom(session=None):
     session.query(XCom).filter(XCom.execution_date <= func.date('2019-06-01')).delete(synchronize_session=False)
 
 
-@dag(default_args=default_args, schedule_interval=None, start_date=days_ago(2), tags=['pre'])
+@dag(default_args=default_args, schedule_interval=None, start_date=days_ago(2), tags=['pre'],on_success_callback=cleanup_xcom)
 def pre():
 
     @task()
