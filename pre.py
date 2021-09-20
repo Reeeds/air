@@ -94,7 +94,7 @@ def pre():
     
     @provide_session
     def cleanup_xcom(session=None):
-        session.query(XCom).filter(XCom.execution_date <= func.date('2019-06-01')).delete()
+        session.query(XCom).filter(XCom.execution_date <= func.date('2019-06-01')).delete(synchronize_session=False)
 
 
     data = extractData()
