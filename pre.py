@@ -35,7 +35,7 @@ google_cloud_connection_id = 'google_cloud_default'
 @provide_session
 def cleanup_xcom(session=None):
     print('hoi')
-    session.query(XCom).filter(XCom.execution_date <= func.date('2019-06-01')).delete(synchronize_session=False)
+    session.query(XCom).filter(XCom.execution_date <= func.date('2022-06-01')).delete(synchronize_session=False)
 
 
 @dag(default_args=default_args, schedule_interval=None, start_date=days_ago(2), tags=['pre'],on_success_callback=cleanup_xcom)
