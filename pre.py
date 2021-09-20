@@ -11,6 +11,11 @@ from airflow.utils.dates import days_ago
 #from airflow.utils.email import send_email
 from airflow.models import Variable
 
+from airflow.utils.db import provide_session
+from airflow.models import XCom
+from sqlalchemy import func
+
+
 
 default_args = {
     'owner': 'airflow',
@@ -86,11 +91,16 @@ def pre():
         dfResult['ConnectedArt_BoId'] = str(dfResult['consequents']) + "," +   str("70")      + "," + str(dfResult['antecedents'])
         print(dfResult.head())
         return dfResult.to_csv()
+    
+    @provide_session
+    def cleanup_xcom(session=None):
+        session.query(XCom).filter(XCom.execution_date <= func.date('2019-06-01')).delete()
 
 
     data = extractData()
     transformedData = transform1(data)
     transform2(transformedData)
+    cleanup_xcom()
 
 pre = pre()
 
