@@ -31,12 +31,16 @@ minSupport = float(Variable.get("minSupport"))
 numberOfRecommendationsPerArt = int(Variable.get("numberOfRecommendationsPerArt"))
 google_cloud_connection_id = 'google_cloud_default'
 
+#delete all xcoms
+#@provide_session
+#def cleanup_xcom(session=None):
+#    print('hoi')
+#    session.query(XCom).filter(XCom.execution_date <= func.date('2022-06-01')).delete(synchronize_session=False)
 
 @provide_session
-def cleanup_xcom(session=None):
-    print('hoi')
-    session.query(XCom).filter(XCom.execution_date <= func.date('2022-06-01')).delete(synchronize_session=False)
-
+def cleanup_xcom(context, session=None):
+    dag_id = context["ti"]["dag_id"]
+    session.query(XCom).filter(XCom.dag_id == dag_id).delete()
 
 @dag(default_args=default_args, schedule_interval=None, start_date=days_ago(2), tags=['pre'],on_success_callback=cleanup_xcom())
 def pre():
