@@ -54,7 +54,7 @@ def config():
         print(dfConfig)
         analyseDistinct = dfConfig.analyse_id.unique()
         for analyse in analyseDistinct:
-            dfAnalyse = df.loc[df['analyse_id']==analyse]
+            dfAnalyse = dfConfig.loc[dfConfig['analyse_id']==analyse]
             print(dfAnalyse)
 
 
