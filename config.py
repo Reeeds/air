@@ -45,6 +45,7 @@ def config():
             cursor = connection.cursor()
             cursor.execute(query)
             data = cursor.fetchall()
+            print(data)
             df = pd.DataFrame(data)
             print(df)
             return df.to_csv()
