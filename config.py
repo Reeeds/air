@@ -36,7 +36,7 @@ def getDataFromPostgres():
             order by analysen.id,customers.id
             ;
         '''
-        pg_hook = PostgresHook(postgre_conn_id=postgres_connection_id,schema="public")
+        pg_hook = PostgresHook(postgre_conn_id=postgres_connection_id,schema="cis-config")
         connection = pg_hook.get_conn()
         cursor = connection.cursor()
         cursor.execute(query)
