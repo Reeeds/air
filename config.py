@@ -25,42 +25,40 @@ google_cloud_connection_id = 'google_cloud_default'
 postgres_connection_id = 'postgresConfigDB'
 
 
-def getDataFromPostgres():
-        query = '''
-            select analysen.id as Analyse_id,customers.id as Customer_id, "paramList"
-            from customers
-            inner join ht
-            on customers.id = ht.fk_customer_id
-            inner join analysen
-            on analysen.id = ht.fk_analyse_id
-            order by analysen.id,customers.id
-            ;
-        '''
-        pg_hook = PostgresHook(postgre_conn_id=postgres_connection_id,schema="cis-config")
-        connection = pg_hook.get_conn()
-        cursor = connection.cursor()
-        cursor.execute(query)
-        sources = cursor.fetchall()
-        print(sources)
-        return sources
-
 @dag(default_args=default_args, schedule_interval=None, start_date=days_ago(2), tags=['config'])
 def config():
-    start_task = DummyOperator(task_id='start_task')
-    hook_task = PythonOperator(task_id='hook_task',python_callable=getDataFromPostgres)
-    start_task >> hook_task
-#    @task()
-#    def getDataFromPostgres():
-#        get_config = PostgresOperator(task_id="get_config", sql=query)
-#        print(get_config)
+
+    @task()    
+    def getConfigFromPostgres():
+            query = '''
+                select analysen.id as Analyse_id,customers.id as Customer_id, "paramList"
+                from customers
+                inner join ht
+                on customers.id = ht.fk_customer_id
+                inner join analysen
+                on analysen.id = ht.fk_analyse_id
+                order by analysen.id,customers.id
+                ;
+            '''
+            pg_hook = PostgresHook(postgre_conn_id=postgres_connection_id,schema="cis-config")
+            connection = pg_hook.get_conn()
+            cursor = connection.cursor()
+            cursor.execute(query)
+            data = cursor.fetchall()
+            df = pd.DataFrame(data)
+            return df.to_csv()
+    
+    @task()    
+    def generateDags(data):
+        dfConfig = pd.read_csv(filepath_or_buffer=io.StringIO(data))
+        print(dfConfig)
+        analyseDistinct = dfConfig.analyse_id.unique()
+        for analyse in analyseDistinct:
+            dfAnalyse = df.loc[df['analyse_id']==analyse]
+            print(dfAnalyse)
 
 
-#    @task()
-#    def uploadData(data):
-##        output = pd.read_csv(filepath_or_buffer=io.StringIO(data),encoding='utf8', sep=';')
-#        gcs_hook = GCSHook(
-#            gcp_conn_id=google_cloud_connection_id
-#        )
-#        gcs_hook.upload(bucket_name='pre_bucket', data=data, object_name='output.csv', mime_type='application/csv')
+    config = getConfigFromPostgres()
+    generateDags(config)
 
 dag = config()
