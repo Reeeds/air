@@ -44,10 +44,9 @@ def config():
             connection = pg_hook.get_conn()
             cursor = connection.cursor()
             cursor.execute(query)
-            data = cursor.fetchall()
-            print(data)
-            df = pd.DataFrame(data)
+            df = pd.read_sql(query,connection)
             print(df)
+
             return df.to_csv()
     
     @task()    
