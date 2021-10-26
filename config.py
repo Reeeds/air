@@ -46,13 +46,14 @@ def config():
             cursor.execute(query)
             data = cursor.fetchall()
             df = pd.DataFrame(data)
+            print(df)
             return df.to_csv()
     
     @task()    
     def generateDags(data):
         dfConfig = pd.read_csv(filepath_or_buffer=io.StringIO(data))
         print(dfConfig)
-        analyseDistinct = dfConfig.analyse_id.unique()
+        analyseDistinct = dfConfig['analyse_id'].unique()
         for analyse in analyseDistinct:
             dfAnalyse = dfConfig.loc[dfConfig['analyse_id']==analyse]
             print(dfAnalyse)
