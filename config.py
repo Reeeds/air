@@ -63,3 +63,4 @@ def config():
 #        )
 #        gcs_hook.upload(bucket_name='pre_bucket', data=data, object_name='output.csv', mime_type='application/csv')
 
+dag = config()
