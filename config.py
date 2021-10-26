@@ -49,7 +49,6 @@ def config():
     start_task = DummyOperator(task_id='start_task')
     hook_task = PythonOperator(task_id='hook_task',python_callable=getDataFromPostgres)
     start_task >> hook_task
-
 #    @task()
 #    def getDataFromPostgres():
 #        get_config = PostgresOperator(task_id="get_config", sql=query)
